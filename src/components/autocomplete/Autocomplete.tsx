@@ -88,6 +88,7 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
             <Option
               key={option}
               value={option}
+              query={value}
               isActive={index === activeIndex}
               onClick={handleOptionClick}
             />
