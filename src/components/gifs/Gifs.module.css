@@ -1,0 +1,12 @@
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  height: 80vh;
+}
+
+.wrapper > img {
+  object-fit: cover;
+  margin: 5px;
+  height: calc(25% - 10px);
+  width: calc(20% - 10px);
+}

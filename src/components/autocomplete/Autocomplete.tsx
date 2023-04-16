@@ -25,14 +25,14 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
   }
   
   const hideOptions = () => {
-    setShowOptions(false);
     resetActiveIndex();
+    setShowOptions(false);
   }
   
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
     onChange?.(e.target.value);
-    setShowOptions(true);
     resetActiveIndex();
+    setShowOptions(true);
   }, []);
   
   const handleInputClick = useCallback(() => {
