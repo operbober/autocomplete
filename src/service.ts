@@ -1,4 +1,3 @@
-import { Simulate } from 'react-dom/test-utils';
 import { GIPHY_API_KEY } from './constants';
 import { Gif } from './types';
 

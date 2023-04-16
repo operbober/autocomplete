@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { useApi } from 'hooks/useApi';
+import React, { useEffect, useState } from 'react';
 import { searchGifs } from 'service';
+import { Gif } from 'types';
 import styles from './Gifs.module.css';
 
 
@@ -9,10 +9,12 @@ interface GifsProps {
 }
 
 export const Gifs: React.FC<GifsProps> = ({ query }) => {
-  const { result: gifs, makeRequest: getGifs } = useApi(searchGifs);
+  const [gifs, setGifs] = useState<Gif[]>([]);
   
   useEffect(() => {
-    getGifs(query);
+    searchGifs(query).then((gifs) => {
+      setGifs(gifs);
+    });
   }, [query]);
   
   if (!gifs?.length) {
@@ -21,7 +23,7 @@ export const Gifs: React.FC<GifsProps> = ({ query }) => {
   
   return <div className={styles.wrapper}>
     {gifs?.map((gif) =>
-      <img src={gif.images.preview_gif.url}/>,
+      <img key={gif.id} src={gif.images.preview_gif.url} alt={gif.alt_text}/>,
     )}
   </div>;
 };

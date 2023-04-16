@@ -1,48 +1,46 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AutoComplete } from './components/autocomplete/Autocomplete';
 import { Gifs } from './components/gifs/Gifs';
-import { useApi } from './hooks/useApi';
 import { searchTags } from './service';
+import { debounce } from './utils';
 
 export function App() {
+  const [selectedValue, setSelectedValue] = useState('');
   const [query, setQuery] = useState('');
-  const [value, setValue] = useState(query);
   const [options, setOptions] = useState<string[]>([]);
-  const { result: tags, makeRequest: getTags } = useApi(searchTags);
   
-  useEffect(() => {
-    setValue(query)
-  }, [query]);
-  
-  useEffect(() => {
-    setOptions(tags || []);
-  }, [tags]);
-  
-  useEffect(() => {
-    if (!value) {
+  const debouncedSearchTags = useMemo(() => debounce((query: string) => {
+    if (!query) {
       return;
     }
     
-    getTags(value);
-  }, [value]);
+    searchTags(query).then((tags) => {
+      setOptions(tags);
+    });
+  }, 250), []);
   
-  const handleChange = useCallback((newValue: string) => {
-    setValue(newValue);
+  useEffect(() => {
+    setOptions([]);
+    debouncedSearchTags(query);
+  }, [debouncedSearchTags, query])
+  
+  const handleChange = useCallback((value: string) => {
+    setQuery(value);
   }, []);
   
-  const handleSelect = useCallback((selectedValue: string) => {
-    setQuery(selectedValue.trim());
+  const handleSelect = useCallback((value: string) => {
+    setSelectedValue(value);
   }, []);
   
   return (
     <div>
       <AutoComplete
-        value={value}
+        value={query}
         options={options}
         onChange={handleChange}
         onSelect={handleSelect}
       />
-      <Gifs query={query}/>
+      <Gifs query={selectedValue}/>
     </div>
   );
 }

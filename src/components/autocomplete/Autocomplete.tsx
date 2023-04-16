@@ -20,29 +20,26 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
   const [activeIndex, setActiveIndex] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
   
-  const resetActiveIndex = () => {
+  const hideOptions = useCallback(() => {
     setActiveIndex(-1);
-  }
-  
-  const hideOptions = () => {
-    resetActiveIndex();
     setShowOptions(false);
-  }
+  }, [setActiveIndex, setShowOptions]);
   
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
     onChange?.(e.target.value);
-    resetActiveIndex();
+    setActiveIndex(-1);
     setShowOptions(true);
-  }, []);
+  }, [onChange]);
   
   const handleInputClick = useCallback(() => {
     setShowOptions(true);
   }, []);
   
   const handleOptionClick = useCallback((option: string) => {
+    onChange?.(option);
     onSelect?.(option);
     hideOptions();
-  }, []);
+  }, [onChange, onSelect, hideOptions]);
   
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowDown" && options.length) {
@@ -70,7 +67,7 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
     }
   };
   
-  useHandleClickOutside(wrapperRef, hideOptions, []);
+  useHandleClickOutside(wrapperRef, hideOptions);
   
   return (
     <div className={styles.wrapper} ref={wrapperRef}>
